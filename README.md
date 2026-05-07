@@ -1,4 +1,4 @@
-# azure-container-lab
+# Azure-Container-Lab
 
 A hands-on progression through Azure's container services, deployed via Terraform.
 
