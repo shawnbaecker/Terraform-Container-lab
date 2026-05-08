@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Platform Inspector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .dashboard {
+            width: 100%;
+            max-width: 720px;
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid #334155;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #334155;
+        }
+
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #94a3b8;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #22c55e;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.8); }
+        }
+
+        .platform-card {
+            background: linear-gradient(135deg, var(--platform-color) 0%, transparent 200%);
+            border: 2px solid var(--platform-color);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .platform-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .platform-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 1.25rem;
+            border: 1px solid #334155;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #e2e8f0;
+            font-variant-numeric: tabular-nums;
+            transition: color 0.3s ease;
+        }
+
+        .stat-value.flash {
+            color: var(--platform-color);
+        }
+
+        .hostname {
+            background: #0f172a;
+            border-radius: 10px;
+            padding: 1.25rem;
+            border: 1px solid #334155;
+            margin-bottom: 1.5rem;
+        }
+
+        .hostname-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .hostname-value {
+            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            word-break: break-all;
+            transition: color 0.3s ease;
+        }
+
+        .hostname-value.flash {
+            color: var(--platform-color);
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: #475569;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        @media (max-width: 480px) {
+            .dashboard {
+                padding: 1.5rem;
+            }
+            .platform-name {
+                font-size: 1.25rem;
+            }
+            .stat-value {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard" id="dashboard" style="--platform-color: {{ info.platform_color }}">
+        <div class="header">
+            <h1>Platform Inspector</h1>
+            <div class="live-indicator">
+                <span class="pulse"></span>
+                <span>live</span>
+            </div>
+        </div>
+
+        <div class="platform-card" id="platform-card">
+            <span class="platform-icon" id="platform-icon">{{ info.platform_icon }}</span>
+            <div class="platform-name" id="platform-name">{{ info.platform }}</div>
+        </div>
+
+        <div class="hostname">
+            <div class="hostname-label">Hostname / Container ID</div>
+            <div class="hostname-value" id="hostname">{{ info.hostname }}</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat">
+                <div class="stat-label">Requests Served</div>
+                <div class="stat-value" id="request-count">{{ info.request_count }}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Uptime</div>
+                <div class="stat-value" id="uptime">{{ info.uptime_human }}</div>
+            </div>
+            <div class="stat">
+                <div class="stat-label">Region</div>
+                <div class="stat-value" id="region">{{ info.region }}</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <span id="timestamp">{{ info.timestamp }}</span>
+        </div>
+    </div>
+
+    <script>
+        let lastHostname = "{{ info.hostname }}";
+
+        async function refresh() {
+            try {
+                const response = await fetch('/api/info');
+                const data = await response.json();
+
+                const dashboard = document.getElementById('dashboard');
+                dashboard.style.setProperty('--platform-color', data.platform_color);
+
+                document.getElementById('platform-icon').textContent = data.platform_icon;
+                document.getElementById('platform-name').textContent = data.platform;
+
+                const hostnameEl = document.getElementById('hostname');
+                hostnameEl.textContent = data.hostname;
+
+                // Flash the hostname if it changes — this is the magic moment on AKS
+                if (data.hostname !== lastHostname) {
+                    hostnameEl.classList.add('flash');
+                    setTimeout(() => hostnameEl.classList.remove('flash'), 800);
+                    lastHostname = data.hostname;
+                }
+
+                const reqEl = document.getElementById('request-count');
+                reqEl.textContent = data.request_count;
+                reqEl.classList.add('flash');
+                setTimeout(() => reqEl.classList.remove('flash'), 300);
+
+                document.getElementById('uptime').textContent = data.uptime_human;
+                document.getElementById('region').textContent = data.region;
+                document.getElementById('timestamp').textContent = data.timestamp;
+            } catch (err) {
+                console.error('Refresh failed:', err);
+            }
+        }
+
+        // Poll every 2 seconds
+        setInterval(refresh, 2000);
+    </script>
+</body>
+</html>
