@@ -17,14 +17,14 @@ Same image, different runtimes — different behavior.
 
 ## Stages
 
-1. **Local** — Build and run with Docker Desktop
-2. **Azure Container Registry (ACR)** — Private image storage
-3. **Azure Container Instances (ACI)** — Run a single container, fast
-4. **Azure Container Apps (ACA)** — Serverless containers with autoscaling
-5. **Azure Kubernetes Service (AKS)** — Full Kubernetes, full control
+- [x] **1. Local** — Build and run with Docker Desktop ✅
+- [ ] **2. Azure Container Registry (ACR)** — Private image storage
+- [ ] **3. Azure Container Instances (ACI)** — Run a single container, fast
+- [ ] **4. Azure Container Apps (ACA)** — Serverless containers with autoscaling
+- [ ] **5. Azure Kubernetes Service (AKS)** — Full Kubernetes, full control
 
-Each stage lives in its own Terraform module under `/infra` and can be applied
-or destroyed independently to keep costs in check.
+Stages 2–5 will live in their own Terraform modules under `/infra` and can be
+applied or destroyed independently to keep costs in check.
 
 ## Naming convention
 
